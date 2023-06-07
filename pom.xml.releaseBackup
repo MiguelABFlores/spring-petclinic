@@ -9,7 +9,7 @@
     <connection>scm:git:https://github.com/mbrisenogrid/spring-petclinic.git</connection>
     <developerConnection>scm:git:https://github.com/mbrisenogrid/spring-petclinic.git</developerConnection>
     <url>https://github.com/mbrisenogrid/spring-petclinic.git</url>
-    <tag>spring-petclinic-3</tag>
+    <tag>spring-petclinic-3.0.0</tag>
   </scm>
 
   <parent>
