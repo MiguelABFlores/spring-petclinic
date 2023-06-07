@@ -6,15 +6,16 @@
   <version>3-SNAPSHOT</version>
 
   <scm>
-    <connection>scm:git:https://github.com/your-username/spring-petclinic.git</connection>
-    <developerConnection>scm:git:https://github.com/your-username/spring-petclinic.git</developerConnection>
-    <url>https://github.com/your-username/spring-petclinic</url>
+    <connection>scm:git:https://github.com/mbrisenogrid/spring-petclinic.git</connection>
+    <developerConnection>scm:git:https://github.com/mbrisenogrid/spring-petclinic.git</developerConnection>
+    <url>https://github.com/mbrisenogrid/spring-petclinic.git</url>
+    <tag>spring-petclinic-3</tag>
   </scm>
 
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.0.0</version>
   </parent>
   <name>petclinic</name>
 
