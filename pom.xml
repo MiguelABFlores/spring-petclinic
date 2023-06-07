@@ -12,6 +12,13 @@
     <tag>spring-petclinic-3.0.0</tag>
   </scm>
 
+  <distributionManagement>
+      <repository>
+          <id>650759667</id>
+          <url>https://github.com/mbrisenogrid/spring-petclinic.git</url>
+      </repository>
+  </distributionManagement>
+
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
