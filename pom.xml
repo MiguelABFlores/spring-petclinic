@@ -3,13 +3,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.springframework.samples</groupId>
   <artifactId>spring-petclinic</artifactId>
-  <version>3.0.2-SNAPSHOT</version>
+  <version>3.0.2</version>
 
   <scm>
     <connection>scm:git:https://github.com/mbrisenogrid/spring-petclinic.git</connection>
     <developerConnection>scm:git:https://github.com/mbrisenogrid/spring-petclinic.git</developerConnection>
     <url>https://github.com/mbrisenogrid/spring-petclinic.git</url>
-    <tag>spring-petclinic-3.0.0</tag>
+    <tag>spring-petclinic-3.0.2</tag>
   </scm>
 
   <distributionManagement>
