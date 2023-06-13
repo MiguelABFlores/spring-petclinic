@@ -1,3 +1,13 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'pl.allegro.tech.build:axion-release-plugin:1.13.0'
+    }
+}
+
+
 plugins {
   id 'java'
   id 'org.springframework.boot' version '3.1.0'
@@ -39,4 +49,12 @@ dependencies {
 
 tasks.named('test') {
   useJUnitPlatform()
+}
+
+task openTestResults(dependsOn: ['build', 'test']) {
+    doLast {
+        exec {
+            commandLine 'cmd', '/c', 'start', 'file://' + project.projectDir.path + '/build/reports/tests/test/index.html'
+        }
+    }
 }
