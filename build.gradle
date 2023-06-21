@@ -19,6 +19,7 @@ plugins {
 
 apply plugin: 'java'
 apply plugin: 'java-library'
+apply plugin: 'maven-publish'
 
 group = 'org.springframework.samples'
 version = scmVersion.version
@@ -78,19 +79,21 @@ task openTestResults(dependsOn: ['build', 'test']) {
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
-            groupId 'org.example'
-            artifactId 'gradle-push'
-            version version
-            from components.java
-            versionMapping {
-                usage('java-api') {
-                    fromResolutionOf('runtimeClasspath')
-                }
-                usage('java-runtime') {
-                    fromResolutionResult()
-                }
+        maven(MavenPublication) {
+            artifact("build/libs/$rootProject.name-$version"+".jar") {
+                extension 'jar'
             }
+        }
+    }
+    repositories {
+        maven {
+            name 'maven-snapshots'
+            url "http://localhost:10001/repository/maven-snapshots/"
+            credentials {
+                username project.repoUser
+                password project.repoPassword
+            }
+            allowInsecureProtocol = true
         }
     }
 }
