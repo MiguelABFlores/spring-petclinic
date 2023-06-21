@@ -9,13 +9,16 @@ buildscript {
 
 plugins {
     id 'java'
+    id 'java-library'
     id 'org.springframework.boot' version '3.1.0'
     id 'io.spring.dependency-management' version '1.1.0'
     id 'org.graalvm.buildtools.native' version '0.9.22'
     id 'pl.allegro.tech.build.axion-release' version '1.15.1'
+    id 'maven-publish'
 }
 
 apply plugin: 'java'
+apply plugin: 'java-library'
 
 group = 'org.springframework.samples'
 version = scmVersion.version
@@ -23,6 +26,18 @@ sourceCompatibility = '17'
 
 repositories {
     mavenCentral()
+    jcenter()
+    maven {
+            def groupRepoUrl = "https://localhost:10001/repository/maven-group/"
+            def centralRepoUrl = "https://localhost:10001/repository/maven-central/"
+            def releasesRepoUrl = "https://localhost:10001/repository/maven-releases/"
+            def snapshotsRepoUrl = "https://localhost:10001/repository/maven-snapshots/"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+                username "admin"
+                password "MigueGD0707."
+            }
+        }
 }
 
 ext.webjarsFontawesomeVersion = "4.7.0"
@@ -45,6 +60,8 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
 
 tasks.named('test') {
@@ -59,4 +76,21 @@ task openTestResults(dependsOn: ['build', 'test']) {
     }
 }
 
-
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId 'org.example'
+            artifactId 'gradle-push'
+            version version
+            from components.java
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
+        }
+    }
+}
