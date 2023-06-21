@@ -2,4 +2,4 @@ Deploy maven artifacts to nexus
 mvn clean install deploy -Dcheckstyle.skip
 
 Deploy gradle artifacts to nexus
-./gradlew build
+./gradlew clean build publish
