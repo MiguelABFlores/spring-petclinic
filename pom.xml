@@ -267,7 +267,7 @@
   <repositories>
     <repository>
       <id>maven-group</id>
-      <url>http://localhost:10001/repository/maven-group/</url>
+      <url>http://146.190.15.56:8081/repository/maven-group/</url>
     </repository>
     <repository>
       <id>spring-snapshots</id>
@@ -290,11 +290,11 @@
   <distributionManagement>
     <snapshotRepository>
       <id>maven-snapshots</id>
-      <url>http://localhost:10001/repository/maven-snapshots/</url>
+      <url>http://146.190.15.56:8081/repository/maven-snapshots/</url>
     </snapshotRepository>
     <repository>
       <id>maven-releases</id>
-      <url>http://localhost:10001/repository/maven-releases/</url>
+      <url>http://146.190.15.56:8081/repository/maven-releases/</url>
     </repository>
   </distributionManagement>
 
