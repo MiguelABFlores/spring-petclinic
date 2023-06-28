@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'agent1' // Specify the label of the agent1 node
+        label 'agent1' // Specify the label of the agent1 node a
     }
 
     stages {
