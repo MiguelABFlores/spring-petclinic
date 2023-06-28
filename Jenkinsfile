@@ -1,39 +1,77 @@
 pipeline {
-    agent any
-    
+    agent {
+        label 'agent1' // Specify the label of the agent1 node
+    }
+
     stages {
-        stage('Merge Request Pipeline') {
-            when {
-                changeset "origin/${env.BRANCH_NAME}"
+        stage('Checkstyle') {
+            agent {
+                docker {
+                    image 'maven:latest' // Use Maven image as the base image for the container
+                    args '-v $HOME/.m2:/root/.m2' // Mount Maven cache directory as a volume
+                }
             }
             steps {
-                // Checkstyle
                 sh 'mvn checkstyle:checkstyle'
-                archiveArtifacts artifacts: 'target/checkstyle-result.xml', fingerprint: true
-                
-                // Test
-                sh 'mvn test'
-                
-                // Build without tests
-                sh 'mvn package -DskipTests'
-                
-                // Create Docker image and push to "mr" repository
-                sh 'docker build -t spring-petclinic:${GIT_COMMIT:0:7} .'
-                sh 'docker tag spring-petclinic:${GIT_COMMIT:0:7} your-repo:8083/mr/spring-petclinic:${GIT_COMMIT:0:7}'
-                sh 'docker push your-repo:8083/mr/spring-petclinic:${GIT_COMMIT:0:7}'
+                archiveArtifacts artifacts: 'target/checkstyle-result.xml', onlyIfSuccessful: false
             }
         }
-        
-        stage('Main Branch Pipeline') {
-            when {
-                branch 'main'
+
+        stage('Test') {
+            agent {
+                docker {
+                    image 'maven:latest' // Use Maven image as the base image for the container
+                    args '-v $HOME/.m2:/root/.m2' // Mount Maven cache directory as a volume
+                }
             }
             steps {
-                // Create Docker image and push to "main" repository
-                sh 'docker build -t spring-petclinic:${GIT_COMMIT:0:7} .'
-                sh 'docker tag spring-petclinic:${GIT_COMMIT:0:7} your-repo:8082/main/spring-petclinic:${GIT_COMMIT:0:7}'
-                sh 'docker push your-repo:8082/main/spring-petclinic:${GIT_COMMIT:0:7}'
+                sh 'mvn test'
             }
         }
+
+        stage('Build') {
+            agent {
+                docker {
+                    image 'maven:latest' // Use Maven image as the base image for the container
+                    args '-v $HOME/.m2:/root/.m2' // Mount Maven cache directory as a volume
+                }
+            }
+            steps {
+                sh 'mvn package -DskipTests'
+            }
+        }
+
+// stage('Create Docker Image - Merge Request') {
+//     environment {
+//         GIT_COMMIT_SHORT = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+//     }
+//     agent {
+//         label 'agent1' // Use the agent1 node for running Docker commands
+//     }
+//     steps {
+//         sh 'docker build -t mr/${env.GIT_COMMIT_SHORT} -f Dockerfile .'
+//         sh 'docker tag mr/${env.GIT_COMMIT_SHORT} nexus/repository/mr:${env.GIT_COMMIT_SHORT}'
+//         withCredentials([usernamePassword(credentialsId: 'nexus-credentials', passwordVariable: 'NEXUS_PASSWORD', usernameVariable: 'NEXUS_USERNAME')]) {
+//             sh 'mvn deploy -Ddocker.image=nexus/repository/mr:${env.GIT_COMMIT_SHORT} -Ddocker.username=${NEXUS_USERNAME} -Ddocker.password=${NEXUS_PASSWORD}'
+//         }
+//     }
+// }
+
+    // post {
+    //     success {
+    //         stage('Create Docker Image - Main Branch') {
+    //             agent {
+    //                 label 'agent1' // Use the agent1 node for running Docker commands
+    //             }
+    //             steps {
+    //                 sh 'docker build -t main -f Dockerfile .'
+    //                 sh 'docker tag main nexus/repository/main:latest'
+    //                 withCredentials([usernamePassword(credentialsId: 'nexus-credentials', passwordVariable: 'NEXUS_PASSWORD', usernameVariable: 'NEXUS_USERNAME')]) {
+    //                     sh 'mvn deploy -Ddocker.image=nexus/repository/main:latest -Ddocker.username=${NEXUS_USERNAME} -Ddocker.password=${NEXUS_PASSWORD}'
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
     }
 }
