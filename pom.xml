@@ -22,6 +22,8 @@
   <name>petclinic</name>
 
   <properties>
+    <!-- Nexus repository variable -->
+    <nexusrepository>143.244.208.157</nexusrepository>
 
     <!-- Generic properties -->
     <java.version>17</java.version>
@@ -267,7 +269,7 @@
   <repositories>
     <repository>
       <id>maven-group</id>
-      <url>http://146.190.15.56:8081/repository/maven-group/</url>
+      <url>http://${nexusrepository}:8081/repository/maven-group/</url>
     </repository>
     <repository>
       <id>spring-snapshots</id>
@@ -290,11 +292,11 @@
   <distributionManagement>
     <snapshotRepository>
       <id>maven-snapshots</id>
-      <url>http://146.190.15.56:8081/repository/maven-snapshots/</url>
+      <url>http://${nexusrepository}:8081/repository/maven-snapshots/</url>
     </snapshotRepository>
     <repository>
       <id>maven-releases</id>
-      <url>http://146.190.15.56:8081/repository/maven-releases/</url>
+      <url>http://${nexusrepository}:8081/repository/maven-releases/</url>
     </repository>
   </distributionManagement>
 
