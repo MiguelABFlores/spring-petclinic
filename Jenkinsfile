@@ -49,7 +49,7 @@ pipeline {
         stage('Stage 1') {
             steps {
                 script {
-                    skipRemainingStages = true
+                    skipRemainingStages = false
 
                     println "skipRemainingStages = ${skipRemainingStages}"
                 }
