@@ -50,9 +50,14 @@ pipeline {
             steps {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                     script {
-                        docker build -t "${PROJECT_NAME}:${GIT_COMMIT[0..6]}" Dockerfile.multi
-                        docker tag "${PROJECT_NAME}:${GIT_COMMIT[0..6]}" "${REPO_URL}/${PROJECT_NAME}:${GIT_COMMIT[0..6]}"
+                        docker.build("${PROJECT_NAME}:${GIT_COMMIT[0..6]}", "-f Dockerfile.multi .")
+                        docker.tag("${PROJECT_NAME}:${GIT_COMMIT[0..6]}", "${REPO_URL}/${PROJECT_NAME}:${GIT_COMMIT[0..6]}")
                     }
+                    // sh 'docker build -t "${PROJECT_NAME}:${GIT_COMMIT[0..6]}" Dockerfile.multi .'
+                    // sh ''
+                    // script { 
+                    //     docker tag "${PROJECT_NAME}:${GIT_COMMIT[0..6]}" "${REPO_URL}/${PROJECT_NAME}:${GIT_COMMIT[0..6]}"
+                    // }
                 }
             }
         }
@@ -61,8 +66,13 @@ pipeline {
             steps {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                     script {
-                        docker push "${REPO_URL}/${PROJECT_NAME}:${GIT_COMMIT[0..6]}"
+                        docker.withRegistry("${REPO_URL}", 'nexus3-repository') {
+                        docker.image("${PROJECT_NAME}:${GIT_COMMIT[0..6]}").push()
+                        }
                     }
+                    // script {
+                    //     docker push "${REPO_URL}/${PROJECT_NAME}:${GIT_COMMIT[0..6]}"
+                    // }
                 }
             }
         }
