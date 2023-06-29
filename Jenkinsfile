@@ -1,6 +1,16 @@
 pipeline {
     agent any
 
+    // options {
+    //     // Add caching for Maven dependencies
+    //     cache(name: 'maven', paths: ['~/.m2/repository'])
+    // }
+
+    environment {
+        M2_HOME = '/opt/apache-maven-3.9.3'
+        PATH = "${env.M2_HOME}/bin:${env.PATH}"
+    }
+
     stages {
         stage('Setup') {
             steps {
