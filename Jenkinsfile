@@ -11,7 +11,7 @@ pipeline {
             steps {
                 checkout([
                     $class: 'GitSCM',
-                    branches: [[name: '*/master']],  // Specify the branch to build
+                    branches: [[name: '*/main']],  // Specify the branch to build
                     userRemoteConfigs: [[url: 'https://github.com/MiguelABFlores/spring-petclinic']],  // Specify the Git repository URL
                     extensions: [
                         [$class: 'CloneOption', depth: 1, noTags: false, reference: '', shallow: true],
