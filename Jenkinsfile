@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    options {
+        // Add caching for Maven dependencies
+        cache(name: 'maven', paths: ['~/.m2/repository'])
+    }
+
     environment {
         M2_HOME = '/opt/apache-maven-3.9.3'
         PATH = "${env.M2_HOME}/bin:${env.PATH}"
@@ -16,13 +21,17 @@ pipeline {
 
         stage('Checkstyle') {
             steps {
-                sh 'mvn checkstyle:checkstyle'
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    sh 'mvn checkstyle:checkstyle'
+                }
             }
         }
 
         stage('Test') {
             steps {
-                sh 'mvn test'
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    sh 'mvn test'
+                }
             }
         }
 
@@ -52,5 +61,12 @@ pipeline {
         //         // Push the image to the "main" repository in Nexus or Docker Hub
         //     }
         // }
+    }
+
+    post {
+        always {
+            // Clean up Maven artifacts after each build
+            deleteDir()
+        }
     }
 }
