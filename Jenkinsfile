@@ -4,6 +4,8 @@ pipeline {
     environment {
         M2_HOME = '/opt/apache-maven-3.9.3'
         PATH = "${env.M2_HOME}/bin:${env.PATH}"
+        PROJECT_NAME = 'spring-petclinic'
+        REPO_URL = '143.244.208.157:8083'
     }
 
     stages {
@@ -13,10 +15,8 @@ pipeline {
                 sh 'mvn --version'
                 // Nexus 3 Docker Repository Credentials
                 script {
-                    // CHECKSTYLE:OFF
                     def dockerRegistryCredentials = credentials('nexus3-repository')
-                    docker.withRegistry('http://143.244.208.157:8083', 'nexus3-repository') {
-                    // CHECKSTYLE:ON
+                    docker.withRegistry("http://${REPO_URL}", 'nexus3-repository') {
                     }
                 }
             }
@@ -46,29 +46,45 @@ pipeline {
             }
         }
 
-        // stage('Build Image') {
-        //     steps {
-        //         catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-        //             sh 'docker build -t spring-petclinic:${GIT_COMMIT:0:7} .'
-        //             sh 'docker tag spring-petclinic:${GIT_COMMIT:0:7} mr/spring-petclinic:${GIT_COMMIT:0:7}'
-        //             sh 'docker push mr/spring-petclinic:${GIT_COMMIT:0:7}'
-        //         }
-        //     }
-        // }
+        stage('Build Image') {
+            steps {
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    script {
+                        docker build -t "${PROJECT_NAME}:${GIT_COMMIT[0..6]}" Dockerfile.multi
+                        docker tag "${PROJECT_NAME}:${GIT_COMMIT[0..6]}" "${REPO_URL}/${PROJECT_NAME}:${GIT_COMMIT[0..6]}"
+                    }
+                }
+            }
+        }
 
-        // stage('Push') {
-        //     steps {
-        //         catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-
-        //         }
-        //     }
-        // }
+        stage('Push') {
+            steps {
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    script {
+                        docker push "${REPO_URL}/${PROJECT_NAME}:${GIT_COMMIT[0..6]}"
+                    }
+                }
+            }
+        }
     }
 
     post {
         always {
             // Clean up Maven artifacts after each build
             deleteDir()
+        }
+        success {
+            // Clean up Docker image after successful push
+            script {
+                docker.image("${REPO_URL}/${PROJECT_NAME}:${GIT_COMMIT[0..6]}").remove()
+            }
+        }
+        
+        failure {
+            // Clean up Docker image after failed push
+            script {
+                docker.image("${REPO_URL}/${PROJECT_NAME}:${GIT_COMMIT[0..6]}").remove()
+            }
         }
     }
 }
