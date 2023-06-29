@@ -49,10 +49,8 @@ pipeline {
         stage('Build Image') {
             steps {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    script {
-                        docker.build("${PROJECT_NAME}:${GIT_COMMIT[0..6]}", "-f Dockerfile.multi .")
-                        docker.tag("${PROJECT_NAME}:${GIT_COMMIT[0..6]}", "${REPO_URL}/${PROJECT_NAME}:${GIT_COMMIT[0..6]}")
-                    }
+                    sh "docker build -t ${PROJECT_NAME}:${GIT_COMMIT.take(7)} -f Dockerfile.multi ."
+                    sh "docker tag ${PROJECT_NAME}:${GIT_COMMIT.take(7)} ${REPO_URL}/${PROJECT_NAME}:${GIT_COMMIT.take(7)}"
                     // sh 'docker build -t "${PROJECT_NAME}:${GIT_COMMIT[0..6]}" Dockerfile.multi .'
                     // sh ''
                     // script { 
@@ -65,14 +63,7 @@ pipeline {
         stage('Push') {
             steps {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    script {
-                        docker.withRegistry("${REPO_URL}", 'nexus3-repository') {
-                        docker.image("${PROJECT_NAME}:${GIT_COMMIT[0..6]}").push()
-                        }
-                    }
-                    // script {
-                    //     docker push "${REPO_URL}/${PROJECT_NAME}:${GIT_COMMIT[0..6]}"
-                    // }
+                    sh "docker push ${REPO_URL}/${PROJECT_NAME}:${GIT_COMMIT.take(7)}"
                 }
             }
         }
@@ -83,18 +74,18 @@ pipeline {
             // Clean up Maven artifacts after each build
             deleteDir()
         }
-        success {
-            // Clean up Docker image after successful push
-            script {
-                docker.image("${REPO_URL}/${PROJECT_NAME}:${GIT_COMMIT[0..6]}").remove()
-            }
-        }
+        // success {
+        //     // Clean up Docker image after successful push
+        //     script {
+        //         sh "docker rmi ${PROJECT_NAME}:${GIT_COMMIT.take(7)}"
+        //     }
+        // }
         
-        failure {
-            // Clean up Docker image after failed push
-            script {
-                docker.image("${REPO_URL}/${PROJECT_NAME}:${GIT_COMMIT[0..6]}").remove()
-            }
-        }
+        // failure {
+        //     // Clean up Docker image after failed push
+        //     script {
+        //         sh "docker rmi ${PROJECT_NAME}:${GIT_COMMIT.take(7)}"
+        //     }
+        // }
     }
 }
