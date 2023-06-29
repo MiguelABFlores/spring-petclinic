@@ -44,11 +44,12 @@
 
 pipeline {
     agent any
+
     stages {
-        stage('test') {
+        stage('Hello') {
             steps {
-                sh 'echo Hello World'
-                sh 'echo yay'
+                echo 'Hello World'
+                echo 'webhook'
             }
         }
     }
