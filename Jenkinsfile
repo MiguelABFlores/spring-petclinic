@@ -1,13 +1,16 @@
 pipeline {
     agent any
 
+    environment {
+        M2_HOME = '/opt/apache-maven-3.6.3'
+        PATH = "${env.M2_HOME}/bin:${env.PATH}"
+    }
+
     stages {
         stage('Setup') {
             steps {
-                // sh 'printenv'
-                sh 'M2_HOME='/opt/apache-maven-3.6.3''
-                sh 'PATH="$M2_HOME/bin:$PATH"'
-                sh 'export PATH'
+                sh 'echo $PATH'
+                sh 'mvn --version'
             }
         }
 
