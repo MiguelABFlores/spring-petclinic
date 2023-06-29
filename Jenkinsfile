@@ -1,5 +1,7 @@
 pipeline {
-    agent none
+    agent {
+        label 'agent1'
+    }
 
     environment {
         M2_HOME = '/opt/apache-maven-3.9.3'
@@ -10,7 +12,6 @@ pipeline {
 
     stages {
         stage('Setup') {
-            agent agent1
             steps {
                 sh 'echo $PATH'
                 sh 'mvn --version'
@@ -24,7 +25,6 @@ pipeline {
         }
 
         stage('Checkstyle') {
-            agent agent1
             steps {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                     sh 'mvn checkstyle:checkstyle'
@@ -33,7 +33,6 @@ pipeline {
         }
 
         stage('Test') {
-            agent agent1
             steps {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                     sh 'mvn test'
@@ -42,7 +41,6 @@ pipeline {
         }
 
         stage('Build') {
-            agent agent1
             steps {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                     sh 'mvn clean install -Dmaven.test.skip=true'
@@ -51,7 +49,6 @@ pipeline {
         }
 
         stage('Build Image') {
-            agent agent1
             steps {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                     sh "docker build -t ${PROJECT_NAME}:${GIT_COMMIT.take(7)} -f Dockerfile.multi ."
@@ -63,7 +60,6 @@ pipeline {
         stage('Push') {
             parallel {
                 stage('Docker Push') {
-                    agent agent1
                     steps {
                         catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                             sh "docker push ${REPO_URL}/${PROJECT_NAME}:${GIT_COMMIT.take(7)}"
@@ -71,7 +67,6 @@ pipeline {
                     }
                 }
                 stage('Maven Deploy') {
-                    agent agent1
                     steps {
                         catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                             sh 'mvn deploy -Dmaven.test.skip=true'
