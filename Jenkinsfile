@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        M2_HOME = '/opt/apache-maven-3.6.3'
+        M2_HOME = '/opt/apache-maven-3.9.3'
         PATH = "${env.M2_HOME}/bin:${env.PATH}"
     }
 
