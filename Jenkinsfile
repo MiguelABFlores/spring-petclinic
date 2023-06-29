@@ -50,6 +50,7 @@ pipeline {
             steps {
                 echo 'Hello World'
                 echo 'webhook'
+                echo 'webhook 2'
             }
         }
     }
