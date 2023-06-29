@@ -35,11 +35,13 @@ pipeline {
             }
         }
 
-        // stage('Build') {
-        //     steps {
-        //         // Build the project without tests using Maven or Gradle
-        //     }
-        // }
+        stage('Build') {
+            steps {
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    sh 'mvn clean install -Dmaven.test.skip=true'
+                }
+            }
+        }
 
         // stage('Create Docker Image - MR') {
         //     when {
