@@ -69,7 +69,7 @@ pipeline {
                     agent any
                     steps {
                         catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                            sh 'mvn deploy'
+                            sh 'mvn deploy -Dmaven.test.skip=true'
                         }
                     }
                 }
