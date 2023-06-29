@@ -48,6 +48,7 @@ pipeline {
         stage('test') {
             steps {
                 sh 'echo Hello World'
+                sh 'echo yay'
             }
         }
     }
