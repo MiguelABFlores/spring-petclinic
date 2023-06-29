@@ -14,7 +14,7 @@ pipeline {
                 // Nexus 3 Docker Repository Credentials
                 script {
                     def dockerRegistryCredentials = credentials('nexus3-repository')
-                    docker.withRegistry('143.244.208.157:8083', 'nexus3-repository') {
+                    docker.withRegistry('http://143.244.208.157:8083', 'nexus3-repository') {
                         // Perform Docker operations (e.g., build, push)
                     }
                 }
