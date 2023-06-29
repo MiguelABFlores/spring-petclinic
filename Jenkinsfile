@@ -41,16 +41,42 @@
 //     // Add more stages as needed
 //     }
 // }
-
+def skipRemainingStages = false
 pipeline {
     agent any
 
     stages {
-        stage('Hello') {
+        stage('Stage 1') {
             steps {
-                echo 'Hello World'
-                echo 'webhook'
-                echo 'webhook 2'
+                script {
+                    skipRemainingStages = true
+
+                    println "skipRemainingStages = ${skipRemainingStages}"
+                }
+            }
+        }
+        stage('Stage 2') {
+            when {
+                expression {
+                    !skipRemainingStages
+                }
+            }
+            steps {
+                script {
+                    println 'This text wont show up....'
+                }
+            }
+        }
+        stage('Stage 3') {
+            when {
+                expression {
+                    !skipRemainingStages
+                }
+            }
+            steps {
+                script {
+                    println 'This text wont show up....'
+                }
             }
         }
     }
