@@ -1,8 +1,8 @@
 pipeline {
     agent {
-        dockerContainer {
+        docker {
             image 'maven:latest'
-            args '-v /your/local/maven/repository:/root/.m2/repository'
+            runArgs '-v /your/local/maven/repository:/root/.m2/repository'
         }
     }
     stages {
