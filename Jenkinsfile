@@ -51,11 +51,6 @@ pipeline {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                     sh "docker build -t ${PROJECT_NAME}:${GIT_COMMIT.take(7)} -f Dockerfile.multi ."
                     sh "docker tag ${PROJECT_NAME}:${GIT_COMMIT.take(7)} ${REPO_URL}/${PROJECT_NAME}:${GIT_COMMIT.take(7)}"
-                    // sh 'docker build -t "${PROJECT_NAME}:${GIT_COMMIT[0..6]}" Dockerfile.multi .'
-                    // sh ''
-                    // script { 
-                    //     docker tag "${PROJECT_NAME}:${GIT_COMMIT[0..6]}" "${REPO_URL}/${PROJECT_NAME}:${GIT_COMMIT[0..6]}"
-                    // }
                 }
             }
         }
@@ -74,18 +69,17 @@ pipeline {
             // Clean up Maven artifacts after each build
             deleteDir()
         }
-        // success {
-        //     // Clean up Docker image after successful push
-        //     script {
-        //         sh "docker rmi ${PROJECT_NAME}:${GIT_COMMIT.take(7)}"
-        //     }
-        // }
-        
-        // failure {
-        //     // Clean up Docker image after failed push
-        //     script {
-        //         sh "docker rmi ${PROJECT_NAME}:${GIT_COMMIT.take(7)}"
-        //     }
-        // }
+        success {
+            // Clean up Docker image after successful push
+            script {
+                sh "docker rmi -f ${PROJECT_NAME}:${GIT_COMMIT.take(7)}"
+            }
+        }
+        failure {
+            // Clean up Docker image after failed push
+            script {
+                sh "docker rmi -f ${PROJECT_NAME}:${GIT_COMMIT.take(7)}"
+            }
+        }
     }
 }
