@@ -1,15 +1,23 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:latest'
-            runArgs '-v /your/local/maven/repository:/root/.m2/repository'
-        }
+    agent any
+
+    options {
+        // Configure the SCM checkout behavior
+        skipDefaultCheckout(true)
     }
+
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the 'main' branch from Git
-                checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'https://github.com/MiguelABFlores/spring-petclinic']]])
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/master']],  // Specify the branch to build
+                    userRemoteConfigs: [[url: 'https://github.com/MiguelABFlores/spring-petclinic']],  // Specify the Git repository URL
+                    extensions: [
+                        [$class: 'CloneOption', depth: 1, noTags: false, reference: '', shallow: true],
+                        [$class: 'CleanBeforeCheckout']
+                    ]
+                ])
             }
         }
         stage('Build') {
