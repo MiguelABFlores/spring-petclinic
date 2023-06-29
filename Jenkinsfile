@@ -1,82 +1,43 @@
-// pipeline {
-//     // agent any
-//     agent {
-//         docker {
-//             image 'maven:latest'
-//             args '-v /your/local/maven/repository:/root/.m2/repository'
-//         }
-//     }
-//     options {
-//         // Configure the SCM checkout behavior
-//         skipDefaultCheckout(true)
-//     }
-
-//     stages {
-//         stage('Checkout') {
-//             steps {
-//                 checkout([
-//                     $class: 'GitSCM',
-//                     branches: [[name: '*/main']],  // Specify the branch to build
-//                     userRemoteConfigs: [[url: 'https://github.com/MiguelABFlores/spring-petclinic']],
-//                     extensions: [
-//                         [$class: 'CloneOption', depth: 1, noTags: false, reference: '', shallow: true],
-//                         [$class: 'CleanBeforeCheckout']
-//                     ]
-//                 ])
-//             }
-//         }
-//         stage('Build') {
-//             steps {
-//                 // Run Maven build
-
-//             // sh 'mvn clean install'
-//             }
-//         }
-//         stage('Test') {
-//             steps {
-//                 // Run Maven tests
-//                 sh 'mvn test'
-//             }
-//         }
-//     // Add more stages as needed
-//     }
-// }
-def skipRemainingStages = false
 pipeline {
     agent any
 
     stages {
-        stage('Stage 1') {
+        stage('Checkstyle') {
             steps {
-                script {
-                    skipRemainingStages = false
+                sh 'mvn checkstyle:checkstyle'
+            }
+        }
 
-                    println "skipRemainingStages = ${skipRemainingStages}"
-                }
+        stage('Test') {
+            steps {
+                // Run tests with Maven or Gradle
             }
         }
-        stage('Stage 2') {
-            when {
-                expression {
-                    !skipRemainingStages
-                }
-            }
+
+        stage('Build') {
             steps {
-                script {
-                    println 'This text wont show up....'
-                }
+                // Build the project without tests using Maven or Gradle
             }
         }
-        stage('Stage 3') {
+
+        stage('Create Docker Image - MR') {
             when {
-                expression {
-                    !skipRemainingStages
-                }
+                branch 'merge_request/*'
             }
             steps {
-                script {
-                    println 'This text wont show up....'
-                }
+                // Create a Docker image using the Dockerfile in the repository
+                // Tag the image with GIT_COMMIT (short)
+                // Push the image to the "mr" repository in Nexus or Docker Hub
+            }
+        }
+
+        stage('Create Docker Image - Main') {
+            when {
+                branch 'main'
+            }
+            steps {
+                // Create a Docker image using the Dockerfile in the repository
+                // Push the image to the "main" repository in Nexus or Docker Hub
             }
         }
     }
