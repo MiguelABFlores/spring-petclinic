@@ -2,6 +2,12 @@ pipeline {
     agent any
 
     stages {
+        stage('Setup') {
+            steps {
+                sh 'printenv'
+            }
+        }
+
         stage('Checkstyle') {
             steps {
                 sh 'mvn checkstyle:checkstyle'
