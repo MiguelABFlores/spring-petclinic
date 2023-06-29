@@ -22,9 +22,7 @@ pipeline {
         stage('Checkstyle') {
             steps {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    withMaven(maven: 'Maven 3.9.3') {
-                        sh 'mvn checkstyle:checkstyle'
-                    }
+                    sh 'mvn checkstyle:checkstyle'
                 }
             }
         }
@@ -32,9 +30,7 @@ pipeline {
         stage('Test') {
             steps {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    withMaven(maven: 'Maven 3.9.3') {
-                        sh 'mvn test'
-                    }
+                    sh 'mvn test'
                 }
             }
         }
