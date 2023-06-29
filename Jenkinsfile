@@ -8,8 +8,8 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Checkout your source code from Git
-                checkout scm
+                // Checkout the 'main' branch from Git
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'https://github.com/MiguelABFlores/spring-petclinic']]])
             }
         }
         stage('Build') {
