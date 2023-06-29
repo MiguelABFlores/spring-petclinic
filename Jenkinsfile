@@ -13,9 +13,10 @@ pipeline {
                 sh 'mvn --version'
                 // Nexus 3 Docker Repository Credentials
                 script {
+                    // CHECKSTYLE:OFF
                     def dockerRegistryCredentials = credentials('nexus3-repository')
                     docker.withRegistry('http://143.244.208.157:8083', 'nexus3-repository') {
-                        // Perform Docker operations (e.g., build, push)
+                    // CHECKSTYLE:ON
                     }
                 }
             }
