@@ -56,9 +56,22 @@ pipeline {
         }
 
         stage('Push') {
-            steps {
-                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    sh "docker push ${REPO_URL}/${PROJECT_NAME}:${GIT_COMMIT.take(7)}"
+            parallel {
+                stage('Docker Push') {
+                    agent any
+                    steps {
+                        catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                            sh "docker push ${REPO_URL}/${PROJECT_NAME}:${GIT_COMMIT.take(7)}"
+                        }
+                    }
+                }
+                stage('Maven Deploy') {
+                    agent any
+                    steps {
+                        catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                            sh 'mvn deploy'
+                        }
+                    }
                 }
             }
         }
