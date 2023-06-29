@@ -6,7 +6,7 @@ pipeline {
     stages {
         stage('Checkstyle') {
             agent {
-                agent1 {
+                docker {
                     image 'maven:latest' // Use Maven image as the base image for the container
                     args '-v $HOME/.m2:/root/.m2' // Mount Maven cache directory as a volume
                 }
@@ -19,7 +19,7 @@ pipeline {
 
         stage('Test') {
             agent {
-                agent1 {
+                docker {
                     image 'maven:latest' // Use Maven image as the base image for the container
                     args '-v $HOME/.m2:/root/.m2' // Mount Maven cache directory as a volume
                 }
@@ -31,7 +31,7 @@ pipeline {
 
         stage('Build') {
             agent {
-                agent1 {
+                docker {
                     image 'maven:latest' // Use Maven image as the base image for the container
                     args '-v $HOME/.m2:/root/.m2' // Mount Maven cache directory as a volume
                 }
