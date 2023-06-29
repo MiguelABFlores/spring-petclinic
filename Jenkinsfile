@@ -1,6 +1,11 @@
 pipeline {
-    agent any
-
+    // agent any
+    agent {
+        docker {
+            image 'maven:latest'
+            args '-v /your/local/maven/repository:/root/.m2/repository'
+        }
+    }
     options {
         // Configure the SCM checkout behavior
         skipDefaultCheckout(true)
@@ -12,7 +17,7 @@ pipeline {
                 checkout([
                     $class: 'GitSCM',
                     branches: [[name: '*/main']],  // Specify the branch to build
-                    userRemoteConfigs: [[url: 'https://github.com/MiguelABFlores/spring-petclinic']],  // Specify the Git repository URL
+                    userRemoteConfigs: [[url: 'https://github.com/MiguelABFlores/spring-petclinic']],
                     extensions: [
                         [$class: 'CloneOption', depth: 1, noTags: false, reference: '', shallow: true],
                         [$class: 'CleanBeforeCheckout']
@@ -23,7 +28,8 @@ pipeline {
         stage('Build') {
             steps {
                 // Run Maven build
-                sh 'mvn clean install'
+
+            // sh 'mvn clean install'
             }
         }
         stage('Test') {
@@ -32,6 +38,6 @@ pipeline {
                 sh 'mvn test'
             }
         }
-        // Add more stages as needed
+    // Add more stages as needed
     }
 }
