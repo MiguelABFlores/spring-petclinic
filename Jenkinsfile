@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        docker {
+        dockerContainer {
             image 'maven:latest'
             args '-v /your/local/maven/repository:/root/.m2/repository'
         }
