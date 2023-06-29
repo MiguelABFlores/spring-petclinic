@@ -8,11 +8,11 @@ pipeline {
             }
         }
 
-        // stage('Test') {
-        //     steps {
-        //         // Run tests with Maven or Gradle
-        //     }
-        // }
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
 
         // stage('Build') {
         //     steps {
