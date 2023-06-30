@@ -1,0 +1,5 @@
+Use mvn 3.9.2
+Use java 17.0.7 jdk
+update settings.xml in ${M2_HOME}/conf/settings.xml
+update settings.xml and pom.xml with the repositories ip addresses and repository names
+if using a repository with no certificates (https) modify nohttp-checkstyle.xml and add the exception
